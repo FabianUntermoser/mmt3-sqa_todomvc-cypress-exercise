@@ -9,8 +9,14 @@ const ITEM1 = 'Find the Plans';
 const ITEM2 = 'Save World';
 const ITEM3 = 'Get out of my house';
 
+let addItem = (text) => {
+  cy.get('.new-todo').type(`${text}{enter}`)
+};
+
 let add3Items = () => {
-  // TODO
+  cy.get('.new-todo').type(`${ITEM1}{enter}`)
+  cy.get('.new-todo').type(`${ITEM2}{enter}`)
+  cy.get('.new-todo').type(`${ITEM3}{enter}`)
 };
 
 describe('TODO MVC', () => {
@@ -22,40 +28,39 @@ describe('TODO MVC', () => {
       cy.get('h1').should('contain', 'todos');
     });
     it('should create new todo', () => {
-      cy.get('.new-todo').type('New TODO{enter}')
-      cy.get('[data-testid=todo-name]').contains('New TODO')
+      addItem(ITEM1)
+      cy.get('[data-testid=todo-name]').contains(ITEM1)
     });
     it('should create new todo that is not completed', () => {
-      cy.get('.new-todo').type('New TODO{enter}')
+      addItem(ITEM1)
       cy.get('.toggle').should('not.be.checked')
     });
 
     it('should create 3 new todos (verify number and last entry)', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
-      cy.get('.new-todo').type('TODO2{enter}')
-      cy.get('.new-todo').type('TODO3{enter}')
+      add3Items();
       cy.get('.todo-list').children().should('have.length', 3)
-      cy.get('.todo-list').children().last().should('contain', 'TODO3')
+      cy.get('.todo-list').children().last().should('contain', ITEM3)
     });
 
     it('should show correct todo count)', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
+      addItem(ITEM1)
       cy.get('.todo-count').should('contain', '1 item left')
-      cy.get('.new-todo').type('TODO2{enter}')
+      addItem(ITEM2)
       cy.get('.todo-count').should('contain', '2 items left')
     });
   });
 
   describe('Toggle', () => {
     it('toggle first item reduces number of left items', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
-      cy.get('.new-todo').type('TODO2{enter}')
+      addItem(ITEM1)
+      addItem(ITEM2)
       cy.get('.todo-count').should('contain', '2 items left')
       cy.get(':nth-child(2) > .view > .toggle').click()
+      cy.get('[data-testid=todo-name]').contains(ITEM2)
       cy.get('.todo-count').should('contain', '1 item left')
     });
     it('toggle completes item', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
+      addItem(ITEM1)
       cy.get('.toggle').click().should('be.checked')
     });
     // There is no toggle button?
@@ -64,39 +69,39 @@ describe('TODO MVC', () => {
 
   describe('Filter', () => {
     it('filter All show all items', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
+      addItem(ITEM1)
       cy.get('.toggle').click()
-      cy.get('.new-todo').type('TODO2{enter}')
+      addItem(ITEM2)
       cy.get('.filters a').contains('All').click()
       cy.get('.todo-count').should('contain', '1 item left')
       cy.get('.todo-list').children().should('have.length', 2)
     });
     it('filter Active shows only active items ', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
+      addItem(ITEM1)
       cy.get('.toggle').click()
-      cy.get('.new-todo').type('TODO2{enter}')
+      addItem(ITEM2)
       cy.get('.filters a').contains('Active').click()
       cy.get('.todo-count').should('contain', '1 item left')
-      cy.get('[data-testid=todo-name]').contains('TODO2')
+      cy.get('[data-testid=todo-name]').contains(ITEM2)
     });
     it('filter Completed shows only completed items ', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
+      addItem(ITEM1)
       cy.get('.toggle').click()
-      cy.get('.new-todo').type('TODO2{enter}')
+      addItem(ITEM2)
       cy.get('.filters a').contains('Completed').click()
       cy.get('.todo-count').should('contain', '1 item left')
-      cy.get('[data-testid=todo-name]').contains('TODO1')
+      cy.get('[data-testid=todo-name]').contains(ITEM1)
     });
   });
 
   describe('clear button', () => {
     it('removes completed items', () => {
-      cy.get('.new-todo').type('TODO1{enter}')
+      addItem(ITEM1)
       cy.get('.toggle').click()
-      cy.get('.new-todo').type('TODO2{enter}')
+      addItem(ITEM2)
       cy.get('.clear-completed').click()
       cy.get('.todo-count').should('contain', '1 item left')
-      cy.get('[data-testid=todo-name]').contains('TODO2')
+      cy.get('[data-testid=todo-name]').contains(ITEM2)
     });
   });
 });
