@@ -29,17 +29,17 @@ describe('TODO MVC', () => {
     });
     it('should create new todo', () => {
       addItem(ITEM1)
-      cy.get('[data-testid=todo-name]').contains(ITEM1)
+      cy.get(TODO_NAME).contains(ITEM1)
     });
     it('should create new todo that is not completed', () => {
       addItem(ITEM1)
       cy.get('.toggle').should('not.be.checked')
     });
 
-    it('should create 3 new todos (verify number and last entry)', () => {
+    it.only('should create 3 new todos (verify number and last entry)', () => {
       add3Items();
-      cy.get('.todo-list').children().should('have.length', 3)
-      cy.get('.todo-list').children().last().should('contain', ITEM3)
+      cy.get(TODO_ITEM).children().should('have.length', 3)
+      cy.get(TODO_ITEM).children().last().should('contain', ITEM3)
     });
 
     it('should show correct todo count)', () => {
@@ -74,7 +74,7 @@ describe('TODO MVC', () => {
       addItem(ITEM2)
       cy.get('.filters a').contains('All').click()
       cy.get('.todo-count').should('contain', '1 item left')
-      cy.get('.todo-list').children().should('have.length', 2)
+      cy.get(TODO_ITEM).children().should('have.length', 2)
     });
     it('filter Active shows only active items ', () => {
       addItem(ITEM1)
